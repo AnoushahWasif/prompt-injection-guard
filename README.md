@@ -21,10 +21,29 @@ A classifier is one layer, not a fix. No filter catches every injection, so the 
 
 Tag-smuggled text is decoded into visible text rather than deleted, so the model sees what the LLM would have read. Real Russian, Greek, German and Chinese text is left alone. It also reports what it undid, because a prompt full of invisible characters is suspicious on its own. 31 tests.
 
+**Data** ([data.py](src/guard/data.py)). Four public datasets, each pinned to a Hugging Face commit and checked by SHA-256:
+
+| Source | Licence | Rows kept | Attacks | What it is |
+|--------|---------|-----------|---------|------------|
+| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) | Apache-2.0 | 662 | 40% | Short English and German prompts |
+| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | Apache-2.0 | 1,970 | 33% | Long role-play jailbreaks ("DAN") and normal requests |
+| [Lakera/gandalf_ignore_instructions](https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions) | MIT | 999 | 100% | Attempts to make the Gandalf game reveal its password |
+| [reshabhs/SPML_Chatbot_Prompt_Injection](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) | MIT | 15,913 | 79% | Attacks on chatbots with a system prompt; only the user message is kept |
+
+`xTRam1/safe-guard-prompt-injection` was left out because it has no licence listed. After normalising, 126 duplicates and 2 empty rows were dropped, leaving 19,544 prompts (14,451 attacks). The duplicate check ignores hidden characters, lookalike letters, case and spacing. No prompt appeared in two sources, and none had conflicting labels. A conflicting prompt would be dropped, not guessed.
+
+**First finding: length gives a lot away.**
+
+![Prompt length by source and label](reports/figures/lengths.png)
+
+Attacks are longer than benign prompts in every source that has both. Length alone separates them with an AUC of 0.87 overall, and **0.995 in SPML**, where benign messages are short questions and attacks are paragraphs. A model trained on this data could learn "long means attack" and then miss short attacks ("ignore the above") and flag long harmless documents. So every model here gets compared against a length-only baseline, and results are reported per source.
+
+SPML is 81% of the rows, so it would dominate a model trained on everything. Day 5 holds out whole sources to see how much of what the model learns carries over.
+
 ## Plan
 
 - [x] Scaffold, architecture, OWASP LLM Top 10 notes, text normaliser
-- [ ] Collect and merge public datasets, dedupe, look at attack styles
+- [x] Collect and merge public datasets, dedupe, look at attack styles
 - [ ] Baseline: TF-IDF + logistic regression
 - [ ] Fine-tune a small transformer
 - [ ] Evaluate on held-out attack styles; error analysis

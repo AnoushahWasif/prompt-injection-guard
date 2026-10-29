@@ -59,13 +59,16 @@ flowchart LR
     end
 ```
 
-## Datasets (candidates, licences checked on Day 2)
+## Datasets (Day 2)
 
-- `deepset/prompt-injections`: about 660 English and German prompts labelled injection or not. Small but clean.
-- Public jailbreak collections on Hugging Face (role-play "DAN" prompts and similar).
-- Benign prompts that *look* risky (security questions, prompts that mention "instructions"), so the model learns more than "the word ignore means attack".
+| Source | Licence | Rows kept | Attacks |
+|--------|---------|-----------|---------|
+| deepset/prompt-injections | Apache-2.0 | 662 | 40% |
+| jackhhao/jailbreak-classification | Apache-2.0 | 1,970 | 33% |
+| Lakera/gandalf_ignore_instructions | MIT | 999 | 100% |
+| reshabhs/SPML_Chatbot_Prompt_Injection (user message only) | MIT | 15,913 | 79% |
 
-Each one is pinned to a revision and its licence is recorded before use. Anything with unclear terms is left out.
+Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injection` was left out: no licence listed. Text length alone separates the classes with AUC 0.87 overall and 0.995 in SPML, so every model is compared against a length-only baseline.
 
 ## Decisions
 
@@ -79,6 +82,8 @@ Each one is pinned to a revision and its licence is recorded before use. Anythin
 | 6 | The guard API fails **closed** by default: if it can't score (error, timeout), the middleware blocks | The opposite of the phishing extension, which fails open. There a failure would stop all browsing; here it stops one LLM call, and letting an unchecked prompt reach a tool-using LLM is the worse outcome. Configurable per app |
 | 7 | Inputs over 20,000 characters are refused before any work | Normalising and tokenising are linear but not free; a cap keeps one request from tying up the service |
 | 8 | Model files are checked by SHA-256 before loading | Same as the other projects: a pickle or a model repo with custom code runs code on load (OWASP LLM03) |
+| 9 | Prompts with conflicting labels across sources are dropped, not resolved (Day 2) | Guessing would put a wrong label into training. There were none, but the check stays for new sources |
+| 10 | Only SPML's user message is kept, not its system prompt (Day 2) | The guard sees what a user sends. Training on system prompts would teach it things it never sees at serving time |
 
 ## Threat model of the guard itself (STRIDE)
 
