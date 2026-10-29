@@ -5,7 +5,11 @@ description = "Detecting prompt injection and jailbreak attempts before they rea
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.11.2",
+    "pandas>=3.1.0",
+    "pyarrow>=26.0.0",
+]
 
 [dependency-groups]
 dev = [
