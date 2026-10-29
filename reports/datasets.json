@@ -1,0 +1,80 @@
+{
+  "merge": {
+    "rows_in": 19672,
+    "dropped_empty_or_too_long": 2,
+    "conflicting_prompts": 0,
+    "dropped_conflict_rows": 0,
+    "dropped_duplicates": 126,
+    "in_more_than_one_source": 0,
+    "rows_out": 19544,
+    "attacks": 14451,
+    "benign": 5093,
+    "rows_in_per_source": {
+      "deepset": 662,
+      "jackhhao": 1998,
+      "gandalf": 1000,
+      "spml": 16012
+    }
+  },
+  "length_auc_all": 0.871,
+  "per_source": {
+    "deepset": {
+      "rows": 662,
+      "attack_share": 0.397,
+      "median_chars_attack": 126.0,
+      "median_chars_benign": 42.0,
+      "length_auc": 0.813,
+      "styles": {
+        "other": 202,
+        "override": 39,
+        "roleplay": 17,
+        "extraction": 5
+      }
+    },
+    "gandalf": {
+      "rows": 999,
+      "attack_share": 1.0,
+      "median_chars_attack": 61.0,
+      "median_chars_benign": null,
+      "length_auc": null,
+      "styles": {
+        "override": 619,
+        "other": 269,
+        "extraction": 98,
+        "roleplay": 13
+      }
+    },
+    "jackhhao": {
+      "rows": 1970,
+      "attack_share": 0.329,
+      "median_chars_attack": 1558.0,
+      "median_chars_benign": 234.0,
+      "length_auc": 0.863,
+      "styles": {
+        "roleplay": 413,
+        "override": 119,
+        "other": 110,
+        "extraction": 6
+      }
+    },
+    "spml": {
+      "rows": 15913,
+      "attack_share": 0.788,
+      "median_chars_attack": 411.0,
+      "median_chars_benign": 77.0,
+      "length_auc": 0.995,
+      "styles": {
+        "other": 8005,
+        "override": 2772,
+        "extraction": 920,
+        "roleplay": 844
+      }
+    }
+  },
+  "styles_all_attacks": {
+    "other": 8586,
+    "override": 3549,
+    "roleplay": 1287,
+    "extraction": 1029
+  }
+}
