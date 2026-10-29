@@ -34,7 +34,8 @@ def plot_lengths(df: pd.DataFrame, path: Path) -> None:
     ax.set_yscale("log")
     ax.set_xticks(np.arange(len(sources)), sources)
     ax.set_ylabel("Characters (log scale)", color=MUTED)
-    ax.set_title("Attacks are longer than benign prompts in every source that has both", color=INK, loc="left")
+    title = "Attacks are longer than benign prompts in every source that has both"
+    ax.set_title(title, color=INK, loc="left")
     handles = [plt.Rectangle((0, 0), 1, 1, color=c) for c in (BENIGN, ATTACK)]
     ax.legend(handles, ["benign", "attack"], frameon=False, fontsize=8, loc="upper left")
     ax.set_axisbelow(True)
