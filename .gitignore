@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+build/
+dist/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Data and trained models are rebuilt by scripts, not committed
+data/
+models/
+
+# Local env
+.env
+.DS_Store
+.vscode/
+.idea/
+
+
+# Hugging Face caches and fine-tuned weights are rebuilt, not committed
+.hf_cache/
