@@ -18,8 +18,7 @@ jobs:
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
-      # Exit code 5 means "no tests collected"; allowed only until the first tests land.
-      - run: uv run pytest || [ $? -eq 5 ]
+      - run: uv run pytest
 
   secrets:
     runs-on: ubuntu-latest
