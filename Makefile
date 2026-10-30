@@ -1,4 +1,4 @@
-.PHONY: install lint format test
+.PHONY: install lint format test data baseline
 
 install:
 	uv sync
@@ -13,3 +13,9 @@ format:
 
 test:
 	uv run pytest
+
+data:
+	uv run python -m guard.data
+
+baseline:
+	uv run python -m guard.baseline
