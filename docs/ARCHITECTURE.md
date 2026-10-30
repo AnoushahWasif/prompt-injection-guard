@@ -84,6 +84,9 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 8 | Model files are checked by SHA-256 before loading | Same as the other projects: a pickle or a model repo with custom code runs code on load (OWASP LLM03) |
 | 9 | Prompts with conflicting labels across sources are dropped, not resolved (Day 2) | Guessing would put a wrong label into training. There were none, but the check stays for new sources |
 | 10 | Only SPML's user message is kept, not its system prompt (Day 2) | The guard sees what a user sends. Training on system prompts would teach it things it never sees at serving time |
+| 11 | The threshold is set on a validation split for at most 1% of benign prompts flagged (Day 3) | False alarms are what get a guard switched off, so they are fixed first and attacks caught is the number compared. One threshold for all sources; per-source rates are reported because they differ (jackhhao 2%) |
+| 12 | A length-only model is trained and reported next to every model (Day 3) | Length alone has AUC 0.87 here. Without it on the table, a model that learned length would look good |
+| 13 | Word and character (3 to 5) n-grams, not words alone (Day 3) | Character n-grams catch misspellings and split words the normaliser doesn't undo, and handle German without a separate tokenizer |
 
 ## Threat model of the guard itself (STRIDE)
 
