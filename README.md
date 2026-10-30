@@ -40,11 +40,33 @@ Attacks are longer than benign prompts in every source that has both. Length alo
 
 SPML is 81% of the rows, so it would dominate a model trained on everything. Day 5 holds out whole sources to see how much of what the model learns carries over.
 
+**Baseline** ([baseline.py](src/guard/baseline.py)). TF-IDF over words and character n-grams, then logistic regression, trained next to a model that only sees length. Split 70/15/15 by source and label. The threshold is set on the validation part so that about 1% of benign prompts get flagged, because a guard that blocks normal users gets switched off. Results on the 2,932 test prompts:
+
+![Attacks caught per source](reports/figures/baseline_recall.png)
+
+| | Length only | TF-IDF |
+|---|---|---|
+| Attacks caught | 2.8% | 97.4% |
+| Benign flagged | 1.2% | 0.8% |
+| ROC AUC | 0.876 | 0.998 |
+| Short attacks caught (84 characters or less, 128 of them) | 0% | 88.3% |
+
+Length has a good AUC but is useless at a 1% false-alarm budget: jackhhao's benign prompts are long, so the threshold has to sit above them and nearly every attack falls under it. TF-IDF is not just length in disguise. It still catches 88% of the short attacks.
+
+Where it's weak:
+
+- **deepset: 44% caught.** The misses are mostly goal hijacks with none of the usual words: "state that Holland is the most powerful nation in the world", "write a manifesto for ...", German requests. The AUC there is 0.974, so the model ranks them above benign prompts but under the one threshold set mostly by the other sources.
+- **Some length still leaks in.** The top attack features include "and", "or", "also" and "that". Long, wordy text looks like an attack, and a long harmless request ("write me a long and detailed story about a dragon and a knight, and also...") gets flagged.
+- **jackhhao benign flagged: 2%** (4 of 198), double the budget. One threshold doesn't hold every source to the same rate.
+- **It's a random split.** Near-duplicate templates in SPML make this easy. Day 5 tests on held-out sources and attack styles, which is the number that matters.
+
+For any prompt, `explain()` lists the n-grams that pushed the score up, for example `ignore`, `instructions`, `all`, `previous`. The model is saved with a SHA-256 manifest and refused on load if the file was changed. 38 tests.
+
 ## Plan
 
 - [x] Scaffold, architecture, OWASP LLM Top 10 notes, text normaliser
 - [x] Collect and merge public datasets, dedupe, look at attack styles
-- [ ] Baseline: TF-IDF + logistic regression
+- [x] Baseline: TF-IDF + logistic regression
 - [ ] Fine-tune a small transformer
 - [ ] Evaluate on held-out attack styles; error analysis
 - [ ] Guard API (FastAPI)

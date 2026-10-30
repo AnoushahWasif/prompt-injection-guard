@@ -1,0 +1,250 @@
+{
+  "rows": {
+    "train": 13680,
+    "validation": 2932,
+    "test": 2932
+  },
+  "dropped_empty_after_normalising": 0,
+  "target_fpr": 0.01,
+  "short_attack_max_chars": 84,
+  "models": {
+    "length": {
+      "threshold": 0.9927,
+      "test": {
+        "all": {
+          "rows": 2932,
+          "attacks": 2168,
+          "benign": 764,
+          "recall": 0.028,
+          "false_positive_rate": 0.012,
+          "roc_auc": 0.876,
+          "pr_auc": 0.931
+        },
+        "per_source": {
+          "deepset": {
+            "rows": 99,
+            "attacks": 39,
+            "benign": 60,
+            "recall": 0.0,
+            "false_positive_rate": 0.0,
+            "roc_auc": 0.838,
+            "pr_auc": 0.738
+          },
+          "gandalf": {
+            "rows": 150,
+            "attacks": 150,
+            "benign": 0,
+            "recall": 0.0,
+            "false_positive_rate": null,
+            "roc_auc": null,
+            "pr_auc": null
+          },
+          "jackhhao": {
+            "rows": 295,
+            "attacks": 97,
+            "benign": 198,
+            "recall": 0.33,
+            "false_positive_rate": 0.045,
+            "roc_auc": 0.881,
+            "pr_auc": 0.723
+          },
+          "spml": {
+            "rows": 2388,
+            "attacks": 1882,
+            "benign": 506,
+            "recall": 0.015,
+            "false_positive_rate": 0.0,
+            "roc_auc": 0.996,
+            "pr_auc": 0.999
+          }
+        },
+        "short_attacks": {
+          "rows": 128,
+          "recall": 0.0
+        }
+      }
+    },
+    "tfidf": {
+      "threshold": 0.4603,
+      "test": {
+        "all": {
+          "rows": 2932,
+          "attacks": 2168,
+          "benign": 764,
+          "recall": 0.974,
+          "false_positive_rate": 0.008,
+          "roc_auc": 0.998,
+          "pr_auc": 0.999
+        },
+        "per_source": {
+          "deepset": {
+            "rows": 99,
+            "attacks": 39,
+            "benign": 60,
+            "recall": 0.436,
+            "false_positive_rate": 0.0,
+            "roc_auc": 0.974,
+            "pr_auc": 0.973
+          },
+          "gandalf": {
+            "rows": 150,
+            "attacks": 150,
+            "benign": 0,
+            "recall": 0.973,
+            "false_positive_rate": null,
+            "roc_auc": null,
+            "pr_auc": null
+          },
+          "jackhhao": {
+            "rows": 295,
+            "attacks": 97,
+            "benign": 198,
+            "recall": 0.928,
+            "false_positive_rate": 0.02,
+            "roc_auc": 0.987,
+            "pr_auc": 0.983
+          },
+          "spml": {
+            "rows": 2388,
+            "attacks": 1882,
+            "benign": 506,
+            "recall": 0.988,
+            "false_positive_rate": 0.004,
+            "roc_auc": 1.0,
+            "pr_auc": 1.0
+          }
+        },
+        "short_attacks": {
+          "rows": 128,
+          "recall": 0.883
+        }
+      }
+    }
+  },
+  "top_features": {
+    "attack": [
+      [
+        "words__and",
+        2.881
+      ],
+      [
+        "words__ignore",
+        2.751
+      ],
+      [
+        "words__instructions",
+        2.427
+      ],
+      [
+        "words__or",
+        2.283
+      ],
+      [
+        "words__also",
+        2.231
+      ],
+      [
+        "chars__ al",
+        2.143
+      ],
+      [
+        "chars__and",
+        2.135
+      ],
+      [
+        "words__all",
+        2.121
+      ],
+      [
+        "chars__ inst",
+        2.049
+      ],
+      [
+        "chars__ and",
+        2.042
+      ],
+      [
+        "words__that",
+        2.034
+      ],
+      [
+        "chars__ and ",
+        2.015
+      ],
+      [
+        "chars__inst",
+        1.989
+      ],
+      [
+        "chars__nst",
+        1.965
+      ],
+      [
+        "chars__ ig",
+        1.923
+      ]
+    ],
+    "benign": [
+      [
+        "words__you help",
+        -2.186
+      ],
+      [
+        "words__are",
+        -1.784
+      ],
+      [
+        "words__there",
+        -1.557
+      ],
+      [
+        "words__chat history",
+        -1.359
+      ],
+      [
+        "words__have any",
+        -1.316
+      ],
+      [
+        "words__you are",
+        -1.255
+      ],
+      [
+        "words__what are",
+        -1.161
+      ],
+      [
+        "words__he",
+        -1.143
+      ],
+      [
+        "words__of the",
+        -1.14
+      ],
+      [
+        "words__is",
+        -1.115
+      ],
+      [
+        "words__what should",
+        -1.082
+      ],
+      [
+        "words__you give",
+        -1.078
+      ],
+      [
+        "words__his",
+        -1.071
+      ],
+      [
+        "words__question",
+        -1.026
+      ],
+      [
+        "words__sentence",
+        -1.02
+      ]
+    ]
+  }
+}
