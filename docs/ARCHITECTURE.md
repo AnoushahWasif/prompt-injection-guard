@@ -33,7 +33,7 @@ This is the most important section, because a guard that looks like a fix is dan
 | Normaliser | `src/guard/normalize.py` | Undoes text tricks before scoring: decodes Unicode tag smuggling, removes zero-width and bidi characters, folds fullwidth letters, fixes Cyrillic/Greek lookalikes inside Latin words. Reports what it found (Day 1) |
 | Data | `src/guard/data.py` | Downloads public datasets from Hugging Face at pinned revisions, merges them into one schema, dedupes on normalised text (Day 2) |
 | Baseline | `src/guard/baseline.py` | TF-IDF + logistic regression: fast, explainable, the bar the transformer must beat (Day 3) |
-| Transformer | `src/guard/finetune.py` | A small model (DistilBERT or DeBERTa-small) fine-tuned on CPU or Colab (Day 4) |
+| Transformer | `src/guard/finetune.py` | Multilingual MiniLM-L12 fine-tuned on CPU; long prompts scored in sliding windows (Day 4) |
 | Evaluation | `src/guard/evaluate.py` | Held-out attack *styles* as well as a random split; error analysis (Day 5) |
 | Guard API | `src/guard/api.py` | FastAPI `POST /check`, plus middleware an app can drop in front of its LLM route (Day 6) |
 | Playground | `web/` | Next.js page: type a prompt, see the score and why (Day 7) |
@@ -87,6 +87,10 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 11 | The threshold is set on a validation split for at most 1% of benign prompts flagged (Day 3) | False alarms are what get a guard switched off, so they are fixed first and attacks caught is the number compared. One threshold for all sources; per-source rates are reported because they differ (jackhhao 2%) |
 | 12 | A length-only model is trained and reported next to every model (Day 3) | Length alone has AUC 0.87 here. Without it on the table, a model that learned length would look good |
 | 13 | Word and character (3 to 5) n-grams, not words alone (Day 3) | Character n-grams catch misspellings and split words the normaliser doesn't undo, and handle German without a separate tokenizer |
+| 14 | Multilingual MiniLM-L12 at a pinned commit, safetensors only, no remote code (Day 4) | The DeBERTa and DistilBERT candidates publish pickle `.bin` weights, which run code on load. MiniLM ships safetensors, is Apache-2.0, small enough to train on a CPU, and covers German |
+| 15 | The word-embedding table is frozen during fine-tuning (Day 4) | It is 96M of the 118M parameters. Freezing it made training about three times faster and keeps the vocabulary of languages not in this data unchanged |
+| 16 | Train on the first 64 and last 64 tokens; score every 128-token window and keep the highest (Day 4) | Injections sit at the start or the end of a prompt, so training sees both. At serving time nothing is cut off, so padding an attack with a harmless paragraph doesn't hide it |
+| 17 | The fine-tuned model's manifest hashes every file, and loading refuses extra files and code-bearing ones (Day 4) | A transformer is a folder, not one file. A `.bin` or `.py` dropped next to the safetensors could be picked up by a loader, so the exact file set is part of the check |
 
 ## Threat model of the guard itself (STRIDE)
 
