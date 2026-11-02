@@ -1,4 +1,4 @@
-.PHONY: install lint format test data baseline finetune
+.PHONY: install lint format test data baseline finetune serve
 
 install:
 	uv sync
@@ -22,3 +22,6 @@ baseline:
 
 finetune:
 	uv run python -m guard.finetune
+
+serve:
+	uv run uvicorn --factory guard.api:app_from_env --host 127.0.0.1 --port 8000

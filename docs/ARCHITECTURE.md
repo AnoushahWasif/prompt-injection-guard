@@ -35,7 +35,7 @@ This is the most important section, because a guard that looks like a fix is dan
 | Baseline | `src/guard/baseline.py` | TF-IDF + logistic regression: fast, explainable, the bar the transformer must beat (Day 3) |
 | Transformer | `src/guard/finetune.py` | Multilingual MiniLM-L12 fine-tuned on CPU; long prompts scored in sliding windows (Day 4) |
 | Evaluation | `src/guard/evaluate.py` | Held-out attack *styles* as well as a random split; error analysis (Day 5) |
-| Guard API | `src/guard/api.py` | FastAPI `POST /check`, plus middleware an app can drop in front of its LLM route (Day 6) |
+| Guard API | `src/guard/api.py`, `src/guard/client.py` | FastAPI `POST /v1/check` returning allow / review / block, and a client that blocks when the guard can't answer (Day 6) |
 | Playground | `web/` | Next.js page: type a prompt, see the score and why (Day 7) |
 | Red-team suite | `tests/redteam/` | Known bypasses as pytest cases, plus a latency benchmark (Day 8) |
 
@@ -91,6 +91,10 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 15 | The word-embedding table is frozen during fine-tuning (Day 4) | It is 96M of the 118M parameters. Freezing it made training about three times faster and keeps the vocabulary of languages not in this data unchanged |
 | 16 | Train on the first 64 and last 64 tokens; score every 128-token window and keep the highest (Day 4) | Injections sit at the start or the end of a prompt, so training sees both. At serving time nothing is cut off, so padding an attack with a harmless paragraph doesn't hide it |
 | 17 | The fine-tuned model's manifest hashes every file, and loading refuses extra files and code-bearing ones (Day 4) | A transformer is a folder, not one file. A `.bin` or `.py` dropped next to the safetensors could be picked up by a loader, so the exact file set is part of the check |
+| 18 | The API serves the TF-IDF model, not MiniLM (Day 6) | 12 ms per request against 100 ms median and 4 s worst case for MiniLM. A slow guard that fails closed blocks the app. MiniLM can come back behind a cheap first pass once Day 5's held-out numbers are in |
+| 19 | "Review" is the band between the 5% and 1% validation false-alarm thresholds; hidden Unicode-tag instructions are never "allow" (Day 6) | Gives decision 1 its numbers. Tag smuggling is never normal user input, whatever the model scores |
+| 20 | At most N prompts scored at once, refused with 503 beyond that instead of queued; a slot is freed by the scoring thread, not by the request timing out (Day 6) | A queue turns a burst into a wave of timeouts. Freeing on timeout would let abandoned work run past the cap |
+| 21 | The pickle is loaded from the bytes that were hashed (Day 6) | Checking the file and then opening it again leaves a gap in which it can be swapped (review of #8) |
 
 ## Threat model of the guard itself (STRIDE)
 
