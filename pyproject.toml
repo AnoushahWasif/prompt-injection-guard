@@ -11,6 +11,8 @@ dependencies = [
     "pandas>=3.1.0",
     "pyarrow>=26.0.0",
     "scikit-learn>=1.9.1",
+    "torch>=2.15.0",
+    "transformers>=5.22.1",
 ]
 
 [dependency-groups]
@@ -35,3 +37,12 @@ select = ["E", "F", "I", "B", "UP", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# CPU wheels: the guard runs on CPU, and the CUDA build is about ten times bigger.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]

@@ -1,4 +1,4 @@
-.PHONY: install lint format test data baseline
+.PHONY: install lint format test data baseline finetune
 
 install:
 	uv sync
@@ -19,3 +19,6 @@ data:
 
 baseline:
 	uv run python -m guard.baseline
+
+finetune:
+	uv run python -m guard.finetune
