@@ -150,9 +150,14 @@ def _metrics(y: np.ndarray, s: np.ndarray, flagged: np.ndarray) -> dict:
 
 
 def evaluate(model: Pipeline, threshold: float, df: pd.DataFrame, short_chars: int) -> dict:
+    return evaluate_scores(scores(model, df["clean"]), threshold, df, short_chars)
+
+
+def evaluate_scores(s: np.ndarray, threshold: float, df: pd.DataFrame, short_chars: int) -> dict:
     """Overall, per source, and on short attacks (no longer than a typical benign prompt)."""
     y = df["label"].to_numpy()
-    s = scores(model, df["clean"])
+    if len(s) != len(y):
+        raise ValueError(f"{len(s)} scores for {len(y)} prompts")
     flagged = s >= threshold
     out = {"all": _metrics(y, s, flagged), "per_source": {}}
     for source in sorted(df["source"].unique()):
