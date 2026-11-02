@@ -7,6 +7,7 @@ someone who can swap the model file can usually edit the manifest next to it too
 
 import hashlib
 import hmac
+import io
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -66,6 +67,9 @@ def load_model(model_dir: Path, expected_sha256: str | None = None) -> LoadedMod
     path = model_dir / MODEL_FILE
     if not path.is_file():
         raise ModelIntegrityError("model file missing")
-    if not hmac.compare_digest(sha256(path), expected):
+    # Read once and unpickle exactly the bytes that were hashed. Hashing the file and then
+    # loading it again would leave a gap in which the file could be swapped.
+    data = path.read_bytes()
+    if not hmac.compare_digest(hashlib.sha256(data).hexdigest(), expected):
         raise ModelIntegrityError("model file hash does not match; refusing to load it")
-    return LoadedModel(joblib.load(path), threshold, manifest)
+    return LoadedModel(joblib.load(io.BytesIO(data)), threshold, manifest)
