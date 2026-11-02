@@ -269,3 +269,17 @@ def test_missing_manifest_is_refused(saved):
 def test_save_refuses_a_bad_threshold(tiny_model, tokenizer, tmp_path):
     with pytest.raises(ValueError):
         ft.save(tiny_model, tokenizer, tmp_path, 0.0, {})
+
+
+def test_save_never_clears_an_unrelated_folder(tiny_model, tokenizer, tmp_path):
+    (tmp_path / "notes.txt").write_text("keep me")
+    with pytest.raises(ValueError, match="other files"):
+        ft.save(tiny_model, tokenizer, tmp_path, 0.5, {})
+    assert (tmp_path / "notes.txt").read_text() == "keep me"
+
+
+def test_save_over_an_earlier_model_replaces_it(tiny_model, tokenizer, saved):
+    out, first = saved
+    second = ft.save(tiny_model, tokenizer, out, 0.6, {"note": "test"})
+    assert second != first
+    assert ft.load(out, second)[2] == 0.6

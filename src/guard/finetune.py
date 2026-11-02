@@ -215,6 +215,9 @@ def save(model, tokenizer, out_dir: Path, threshold: float, info: dict) -> str:
     """Write the model and a manifest of file hashes. Returns the manifest's own SHA-256."""
     if not 0.0 < threshold <= 1.0:
         raise ValueError("threshold must be in (0, 1]")
+    # Extra files get deleted below, so only write into an empty folder or an earlier model.
+    if out_dir.is_dir() and any(out_dir.iterdir()) and not (out_dir / MANIFEST).is_file():
+        raise ValueError(f"{out_dir} has other files in it; refusing to save a model there")
     out_dir.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(out_dir, safe_serialization=True)
     tokenizer.save_pretrained(out_dir)
