@@ -88,6 +88,31 @@ Where it's weak:
 
 Saved with a manifest that lists the SHA-256 of every file plus the threshold. Loading refuses a changed file, an extra file, any `.bin`/`.pt`/`.py` next to the weights, and an edited manifest when the deploy pins its hash. 34 tests, on a tiny model built in the test, so CI never downloads weights.
 
+**Guard API** ([api.py](src/guard/api.py), [client.py](src/guard/client.py)). `POST /v1/check` with `{"text": "..."}` and an `X-API-Key` header returns `allow`, `review` or `block` with coarse reasons:
+
+```json
+{"decision": "block", "reasons": ["looks_like_injection"], "request_id": "7000994e...", "model": "6d5712172a25"}
+```
+
+It serves the TF-IDF model: about 12 ms per request end to end on a laptop, against 100 ms of scoring alone for MiniLM. The "review" band runs from the threshold that flags 5% of validation benign prompts up to the 1% block threshold. Hidden Unicode-tag instructions are never allowed, whatever the score.
+
+| Threat (STRIDE) | What the API does |
+|---|---|
+| Spoofing | API key on every call. Config holds only SHA-256 hashes of keys, compared in constant time. With no keys configured it refuses to start |
+| Tampering (model) | The model's hash is pinned in config, checked at startup, and the pickle is loaded from the same bytes that were hashed, so it can't be swapped in between |
+| Information disclosure | Never logs prompt text, only length, outcome and timing. Never returns the score. A malformed request gets `invalid_request`, not FastAPI's usual echo of the input. No `/docs` or schema |
+| Denial of service | 20,000-character and body-size caps (411 without a length, 413 over it), a rate limit per key, at most 4 prompts scored at once (503 `busy` beyond that, no queue), and a 2-second limit (503 `timeout`). A timed-out prompt keeps its slot until it really finishes, so slow requests can't pile up past the cap |
+| Repudiation | One JSON line per request: request id, key id (first 8 hex of its hash), length, outcome, milliseconds |
+
+The client treats anything but a clear answer as `block`: a refused key, a timeout, a 503, an unknown decision, or a broken body (decision 6). An app can choose to fail open, but has to say so.
+
+```bash
+cp .env.example .env   # fill GUARD_MODEL_SHA256 and GUARD_API_KEY_SHA256, then load it
+make serve
+```
+
+41 tests. Two came from running it for real: the request log lines were silently dropped under uvicorn (its logging setup only covers its own loggers), and a timed-out request's slot was freed by its event loop, not by the scoring thread finishing.
+
 ## Plan
 
 - [x] Scaffold, architecture, OWASP LLM Top 10 notes, text normaliser
@@ -95,7 +120,7 @@ Saved with a manifest that lists the SHA-256 of every file plus the threshold. L
 - [x] Baseline: TF-IDF + logistic regression
 - [x] Fine-tune a small transformer
 - [ ] Evaluate on held-out attack styles; error analysis
-- [ ] Guard API (FastAPI)
+- [x] Guard API (FastAPI)
 - [ ] Next.js playground
 - [ ] Red-team test suite and latency benchmark
 - [ ] Model card, publish the model

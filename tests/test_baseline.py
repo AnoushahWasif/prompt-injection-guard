@@ -296,3 +296,25 @@ def test_run_writes_report_model_and_chart(tmp_path):
     loaded = load_model(tmp_path / "model")
     assert loaded.manifest["data_sha256"] == "ab"
     assert loaded.threshold == pytest.approx(saved["models"]["tfidf"]["threshold"], abs=1e-4)
+
+
+def test_model_is_loaded_from_the_bytes_that_were_hashed(tmp_path, monkeypatch):
+    """Swapping the file after the hash check must not change what gets unpickled."""
+    import joblib
+
+    from guard import model_store
+
+    model_store.save_model({"real": True}, 0.5, tmp_path)
+    real_hash = model_store.sha256(tmp_path / model_store.MODEL_FILE)
+    loads = []
+    original = joblib.load
+
+    def spy(source):
+        loads.append(type(source).__name__)
+        (tmp_path / model_store.MODEL_FILE).write_bytes(b"swapped after the check")
+        return original(source)
+
+    monkeypatch.setattr(model_store.joblib, "load", spy)
+    loaded = model_store.load_model(tmp_path, real_hash)
+    assert loaded.model == {"real": True}
+    assert loads == ["BytesIO"]

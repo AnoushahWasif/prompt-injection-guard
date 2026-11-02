@@ -27,6 +27,9 @@ from guard.normalize import normalize
 
 SEED = 42
 TARGET_FPR = 0.01
+# Prompts between the review and block thresholds get "review" (decision 1): the app can log
+# them, add friction or take tools away instead of refusing outright.
+REVIEW_FPR = 0.05
 # Rows from a source with fewer prompts than this (per label) are stratified with the biggest
 # source of the same label, so a tiny new source can't break the split.
 MIN_STRATUM = 10
@@ -223,11 +226,20 @@ def run(
 
     model, threshold = fitted["tfidf"]
     report["top_features"] = top_features(model)
+    val_benign = scores(model, val.loc[val["label"] == 0, "clean"])
+    review = min(threshold_at_fpr(val_benign, REVIEW_FPR), threshold)
+    report["models"]["tfidf"]["review_threshold"] = round(review, 4)
     save_model(
         model,
         threshold,
         model_dir,
-        {"model": "tfidf_logreg", "target_fpr": TARGET_FPR, "data_sha256": data_sha256},
+        {
+            "model": "tfidf_logreg",
+            "target_fpr": TARGET_FPR,
+            "review_threshold": review,
+            "review_fpr": REVIEW_FPR,
+            "data_sha256": data_sha256,
+        },
     )
 
     reports.mkdir(parents=True, exist_ok=True)

@@ -118,7 +118,8 @@
           "rows": 128,
           "recall": 0.883
         }
-      }
+      },
+      "review_threshold": 0.2334
     }
   },
   "top_features": {
