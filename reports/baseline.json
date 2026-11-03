@@ -65,7 +65,7 @@
       }
     },
     "tfidf": {
-      "threshold": 0.4603,
+      "threshold": 0.4605,
       "test": {
         "all": {
           "rows": 2932,
@@ -119,14 +119,14 @@
           "recall": 0.883
         }
       },
-      "review_threshold": 0.2334
+      "review_threshold": 0.2332
     }
   },
   "top_features": {
     "attack": [
       [
         "words__and",
-        2.881
+        2.882
       ],
       [
         "words__ignore",
@@ -166,7 +166,7 @@
       ],
       [
         "words__that",
-        2.034
+        2.031
       ],
       [
         "chars__ and ",
@@ -188,7 +188,7 @@
     "benign": [
       [
         "words__you help",
-        -2.186
+        -2.185
       ],
       [
         "words__are",
@@ -196,7 +196,7 @@
       ],
       [
         "words__there",
-        -1.557
+        -1.558
       ],
       [
         "words__chat history",
@@ -204,11 +204,11 @@
       ],
       [
         "words__have any",
-        -1.316
+        -1.315
       ],
       [
         "words__you are",
-        -1.255
+        -1.254
       ],
       [
         "words__what are",
@@ -216,7 +216,7 @@
       ],
       [
         "words__he",
-        -1.143
+        -1.144
       ],
       [
         "words__of the",
@@ -224,7 +224,7 @@
       ],
       [
         "words__is",
-        -1.115
+        -1.116
       ],
       [
         "words__what should",
@@ -232,7 +232,7 @@
       ],
       [
         "words__you give",
-        -1.078
+        -1.077
       ],
       [
         "words__his",

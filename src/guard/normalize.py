@@ -8,6 +8,8 @@ to the live guard, so the two never disagree.
 What was undone is returned too: hidden characters in a prompt are a signal on their own.
 """
 
+import base64
+import binascii
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -40,6 +42,12 @@ CONFUSABLES = str.maketrans(
         "Υ": "Y", "Ζ": "Z",
     }
 )  # fmt: skip
+# "i g n o r e": five or more single letters with single spaces between them (Day 8 red team).
+# Five, so short lists like "a b c d" are left alone.
+SPACED_LETTERS = re.compile(r"\b(?:[A-Za-z] ){4,}[A-Za-z]\b")
+# A run that could be base64. Long enough that ordinary words rarely qualify, and a decoded
+# result is only used if it reads as text, so hashes and binary blobs are left alone.
+BASE64_RUN = re.compile(r"(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{16,}={0,2}(?![A-Za-z0-9+/=])")
 WORD = re.compile(r"\w+")
 LATIN = re.compile(r"[A-Za-z]")
 HORIZONTAL_SPACE = re.compile(r"[^\S\n]+")
@@ -53,11 +61,19 @@ class Normalized:
     tag_chars_decoded: int = 0
     confusables_replaced: int = 0
     width_or_compat_changed: bool = False
+    spaced_letters_joined: int = 0
+    base64_decoded: int = 0
 
     @property
     def suspicious(self) -> bool:
-        """Characters a normal user doesn't type were found. Not proof, but worth a look."""
-        return bool(self.invisible_removed or self.tag_chars_decoded or self.confusables_replaced)
+        """Something a normal user doesn't type was found. Not proof, but worth a look."""
+        return bool(
+            self.invisible_removed
+            or self.tag_chars_decoded
+            or self.confusables_replaced
+            or self.spaced_letters_joined
+            or self.base64_decoded
+        )
 
 
 def _decode_tags(text: str) -> tuple[str, int]:
@@ -88,6 +104,46 @@ def _fix_mixed_script(text: str) -> tuple[str, int]:
     return WORD.sub(fix, text), count
 
 
+def _join_spaced_letters(text: str) -> tuple[str, int]:
+    joined = 0
+
+    def join(match: re.Match) -> str:
+        nonlocal joined
+        joined += 1
+        return match.group().replace(" ", "")
+
+    return SPACED_LETTERS.sub(join, text), joined
+
+
+def _readable(raw: bytes) -> str | None:
+    try:
+        decoded = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    printable = sum(ch.isprintable() or ch in "\n\t" for ch in decoded)
+    if " " not in decoded or printable < 0.95 * len(decoded):
+        return None
+    return decoded
+
+
+def _decode_base64(text: str) -> tuple[str, int]:
+    """Readable text hidden as base64 is added after the prompt, the way an LLM asked to
+    decode it would read it. The original stays, so nothing is lost."""
+    found = []
+    for match in BASE64_RUN.finditer(text):
+        run = match.group()
+        try:
+            raw = base64.b64decode(run + "=" * (-len(run) % 4), validate=True)
+        except (binascii.Error, ValueError):
+            continue
+        decoded = _readable(raw)
+        if decoded:
+            found.append(decoded)
+    if not found:
+        return text, 0
+    return text + "\n" + "\n".join(found), len(found)
+
+
 def normalize(text: str) -> Normalized:
     if not isinstance(text, str):
         raise TypeError(f"expected str, got {type(text).__name__}")
@@ -109,6 +165,8 @@ def normalize(text: str) -> Normalized:
 
     text, confusables = _fix_mixed_script(folded)
     text = HORIZONTAL_SPACE.sub(" ", text)
+    text, spaced = _join_spaced_letters(text)
+    text, b64 = _decode_base64(text)
     text = BLANK_LINES.sub("\n\n", text)
     text = "\n".join(line.strip() for line in text.split("\n")).strip()
-    return Normalized(text, invisible, tags, confusables, changed)
+    return Normalized(text, invisible, tags, confusables, changed, spaced, b64)
