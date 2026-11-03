@@ -167,7 +167,7 @@ def plot_heldout(summary: dict, path: Path) -> None:
     title = "Attacks caught on sources and styles left out of training"
     if held_fpr:
         rate, model, name = max(held_fpr)
-        title = (f"Trained without {name.split(':')[1]}, {colors[model][0]} flags {rate:.0%} "
+        title = (f"Trained without {name.split(':')[1]}, {colors[model][0]} flags {rate:.0%}\n"
                  f"of its benign prompts (budget {summary['target_fpr']:.0%})")  # fmt: skip
     if not flagged:
         flagged = [("none held out", {})]
@@ -183,7 +183,7 @@ def plot_heldout(summary: dict, path: Path) -> None:
     bottom.axvline(summary["target_fpr"], color=BASELINE, ls="--", lw=1)
     bottom.set_xlim(0, 1.1)
     bottom.set_xlabel("Benign prompts flagged (dashed line: the budget)", color=MUTED)
-    top.set_title(title, color=INK, loc="left", pad=24, fontsize=10.5)
+    top.set_title(title, color=INK, loc="left", pad=28, fontsize=10.5)
     handles = [plt.Line2D([], [], marker="o", ls="", color=c) for _, c in models]
     top.legend(handles, [colors[m][0] for m, _ in models], frameon=False, fontsize=8,
                ncol=len(models), loc="lower left", bbox_to_anchor=(0, 1.0))  # fmt: skip
