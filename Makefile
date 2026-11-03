@@ -1,4 +1,4 @@
-.PHONY: install lint format test data baseline finetune serve
+.PHONY: install lint format test data baseline finetune serve redteam bench
 
 install:
 	uv sync
@@ -25,3 +25,9 @@ finetune:
 
 serve:
 	uv run uvicorn --factory guard.api:app_from_env --host 127.0.0.1 --port 8000
+
+redteam:
+	uv run pytest tests/redteam -rx
+
+bench:
+	uv run python -m guard.bench

@@ -1,0 +1,75 @@
+{
+  "lengths": {
+    "50": {
+      "scoring": {
+        "runs": 200,
+        "p50_ms": 2.1,
+        "p95_ms": 3.67,
+        "p99_ms": 4.1,
+        "max_ms": 4.29
+      },
+      "http": {
+        "runs": 200,
+        "p50_ms": 6.96,
+        "p95_ms": 11.21,
+        "p99_ms": 14.49,
+        "max_ms": 33.77
+      }
+    },
+    "500": {
+      "scoring": {
+        "runs": 200,
+        "p50_ms": 2.65,
+        "p95_ms": 5.2,
+        "p99_ms": 7.17,
+        "max_ms": 9.08
+      },
+      "http": {
+        "runs": 200,
+        "p50_ms": 9.36,
+        "p95_ms": 12.26,
+        "p99_ms": 14.42,
+        "max_ms": 15.72
+      }
+    },
+    "5000": {
+      "scoring": {
+        "runs": 200,
+        "p50_ms": 12.0,
+        "p95_ms": 17.41,
+        "p99_ms": 24.85,
+        "max_ms": 38.62
+      },
+      "http": {
+        "runs": 200,
+        "p50_ms": 17.46,
+        "p95_ms": 24.44,
+        "p99_ms": 31.63,
+        "max_ms": 32.7
+      }
+    },
+    "20000": {
+      "scoring": {
+        "runs": 200,
+        "p50_ms": 32.73,
+        "p95_ms": 62.01,
+        "p99_ms": 130.65,
+        "max_ms": 259.96
+      },
+      "http": {
+        "runs": 200,
+        "p50_ms": 31.96,
+        "p95_ms": 39.64,
+        "p99_ms": 51.99,
+        "max_ms": 82.9
+      }
+    }
+  },
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+    "cores": 12,
+    "python": "3.12.13",
+    "note": "laptop, other work running; one prompt at a time"
+  },
+  "model": "84156b3ac826"
+}

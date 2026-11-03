@@ -20,6 +20,20 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run pytest
 
+  redteam:
+    # Rebuilds the model from the pinned, hash-checked data and runs the red-team cases.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - run: uv run python -m guard.data
+      - run: uv run python -m guard.baseline
+      - run: uv run pytest tests/redteam -rx
+        env:
+          GUARD_REDTEAM_REQUIRED: "1"
+
   secrets:
     runs-on: ubuntu-latest
     steps:
