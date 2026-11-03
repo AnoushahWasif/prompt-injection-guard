@@ -34,7 +34,7 @@ This is the most important section, because a guard that looks like a fix is dan
 | Data | `src/guard/data.py` | Downloads public datasets from Hugging Face at pinned revisions, merges them into one schema, dedupes on normalised text (Day 2) |
 | Baseline | `src/guard/baseline.py` | TF-IDF + logistic regression: fast, explainable, the bar the transformer must beat (Day 3) |
 | Transformer | `src/guard/finetune.py` | Multilingual MiniLM-L12 fine-tuned on CPU; long prompts scored in sliding windows (Day 4) |
-| Evaluation | `src/guard/evaluate.py` | Held-out attack *styles* as well as a random split; error analysis (Day 5) |
+| Evaluation | `src/guard/evaluate.py` | Leave-one-source-out and leave-one-style-out experiments with bootstrap intervals; error analysis (Day 5) |
 | Guard API | `src/guard/api.py`, `src/guard/client.py` | FastAPI `POST /v1/check` returning allow / review / block, and a client that blocks when the guard can't answer (Day 6) |
 | Playground | `web/` | Next.js page: type a prompt, see the score and why (Day 7) |
 | Red-team suite | `tests/redteam/` | Known bypasses as pytest cases, plus a latency benchmark (Day 8) |
@@ -95,6 +95,9 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 19 | "Review" is the band between the 5% and 1% validation false-alarm thresholds; hidden Unicode-tag instructions are never "allow" (Day 6) | Gives decision 1 its numbers. Tag smuggling is never normal user input, whatever the model scores |
 | 20 | At most N prompts scored at once, refused with 503 beyond that instead of queued; a slot is freed by the scoring thread, not by the request timing out (Day 6) | A queue turns a burst into a wave of timeouts. Freeing on timeout would let abandoned work run past the cap |
 | 21 | The pickle is loaded from the bytes that were hashed (Day 6) | Checking the file and then opening it again leaves a gap in which it can be swapped (review of #8) |
+| 22 | Held-out evaluation leaves out a whole source, or every attack of one style, from training and threshold setting (Day 5) | The threshold is part of the model. Setting it with the held-out data in validation would hide exactly the failure this tests for: a false-alarm rate that doesn't transfer |
+| 23 | SPML is capped at 3,000 rows in held-out experiments, for both models and for a matching random split (Day 5) | At 81% of the data it would decide every result. The matching random split keeps the comparison like for like |
+| 24 | Rates are reported with 95% bootstrap intervals (Day 5) | A 1% budget on ~350 validation prompts is set by 3 or 4 of them; a single number would hide that |
 
 ## Threat model of the guard itself (STRIDE)
 

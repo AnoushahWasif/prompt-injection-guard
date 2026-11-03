@@ -110,3 +110,84 @@ def plot_baseline(report: dict, path: Path) -> None:
         ("length only", BASELINE, models["length"]["test"]),
     ]
     plot_recall(series, report["target_fpr"], title, path)
+
+
+def _dots(ax, rows: list[tuple[str, dict]], models: list[tuple[str, str]], metric: str) -> None:
+    """One row per experiment, a dot with its 95% interval per model."""
+    y = np.arange(len(rows))[::-1]
+    for i, (model, color) in enumerate(models):
+        offset = 0.15 - 0.3 * i if len(models) > 1 else 0
+        for yi, (_, by_model) in zip(y, rows, strict=True):
+            m = by_model.get(model, {}).get(metric)
+            if not m:
+                continue
+            ax.errorbar(
+                m["rate"], yi + offset, xerr=[[m["rate"] - m["low"]], [m["high"] - m["rate"]]],
+                fmt="o", color=color, ms=5, capsize=2, lw=1.2,
+            )  # fmt: skip
+            ax.text(m["high"] + 0.015, yi + offset, f"{m['rate']:.0%}", va="center",
+                    fontsize=7.5, color=INK)  # fmt: skip
+    ax.set_yticks(y, [name for name, _ in rows])
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0], ["0%", "25%", "50%", "75%", "100%"])
+    ax.set_axisbelow(True)
+    ax.grid(axis="x", color=GRID, lw=0.8)
+    ax.tick_params(colors=MUTED)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_color(GRID)
+
+
+def plot_heldout(summary: dict, path: Path) -> None:
+    """Attacks caught and benign flagged when the source or style was never trained on."""
+    colors = {"transformer": ("fine-tuned MiniLM", TRANSFORMER), "tfidf": ("TF-IDF", BENIGN)}
+    for m in summary["models"]:
+        colors.setdefault(m, (m, BASELINE))
+    models = [(m, colors[m][1]) for m in colors if m in summary["models"]]
+    results = summary["models"]
+    names = sorted({n for r in results.values() for n in r if n != "random"})
+
+    def part(name: str) -> dict:
+        key = "seen" if name == "random" else "unseen"
+        return {m: results[m][name][key] for m, _ in models if name in results[m]}
+
+    def label(name: str) -> str:
+        return "random split" if name == "random" else "new " + name.replace(":", ": ")
+
+    caught = [(label(n), part(n)) for n in ["random", *names]]
+    flagged = [(label(n), part(n)) for n in ["random", *names]
+               if any(p.get("false_positive_rate") for p in part(n).values())]  # fmt: skip
+
+    held_fpr = [
+        (r["unseen"]["false_positive_rate"]["rate"], m, n)
+        for m, _ in models
+        for n, r in results[m].items()
+        if r["unseen"] and r["unseen"]["false_positive_rate"]
+    ]
+    title = "Attacks caught on sources and styles left out of training"
+    if held_fpr:
+        rate, model, name = max(held_fpr)
+        title = (f"Trained without {name.split(':')[1]}, {colors[model][0]} flags {rate:.0%}\n"
+                 f"of its benign prompts (budget {summary['target_fpr']:.0%})")  # fmt: skip
+    if not flagged:
+        flagged = [("none held out", {})]
+
+    fig, (top, bottom) = plt.subplots(
+        2, 1, figsize=(8, 0.42 * (len(caught) + len(flagged)) + 2.2), dpi=150,
+        gridspec_kw={"height_ratios": [len(caught), len(flagged)]},
+    )  # fmt: skip
+    _dots(top, caught, models, "recall")
+    top.set_xlim(0, 1.1)
+    top.set_xlabel("Attacks caught", color=MUTED)
+    _dots(bottom, flagged, models, "false_positive_rate")
+    bottom.axvline(summary["target_fpr"], color=BASELINE, ls="--", lw=1)
+    bottom.set_xlim(0, 1.1)
+    bottom.set_xlabel("Benign prompts flagged (dashed line: the budget)", color=MUTED)
+    top.set_title(title, color=INK, loc="left", pad=28, fontsize=10.5)
+    handles = [plt.Line2D([], [], marker="o", ls="", color=c) for _, c in models]
+    top.legend(handles, [colors[m][0] for m, _ in models], frameon=False, fontsize=8,
+               ncol=len(models), loc="lower left", bbox_to_anchor=(0, 1.0))  # fmt: skip
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(path)
+    plt.close(fig)

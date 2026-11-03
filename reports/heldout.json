@@ -1,0 +1,1044 @@
+{
+  "spml_cap": 3000,
+  "target_fpr": 0.01,
+  "models": {
+    "tfidf": {
+      "random": {
+        "experiment": "random",
+        "rows": {
+          "train": 4641,
+          "validation": 995,
+          "test": 995
+        },
+        "threshold": 0.456,
+        "seen": {
+          "recall": {
+            "rate": 0.95,
+            "low": 0.933,
+            "high": 0.966,
+            "n": 641
+          },
+          "false_positive_rate": {
+            "rate": 0.011,
+            "low": 0.003,
+            "high": 0.023,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.977,
+              "low": 0.932,
+              "high": 1.0,
+              "n": 44
+            },
+            "other": {
+              "rate": 0.914,
+              "low": 0.881,
+              "high": 0.944,
+              "n": 303
+            },
+            "override": {
+              "rate": 0.995,
+              "low": 0.986,
+              "high": 1.0,
+              "n": 209
+            },
+            "roleplay": {
+              "rate": 0.953,
+              "low": 0.894,
+              "high": 0.988,
+              "n": 85
+            }
+          },
+          "short_attacks": {
+            "rows": 148,
+            "recall": 0.912
+          }
+        },
+        "unseen": null
+      },
+      "source:deepset": {
+        "experiment": "source:deepset",
+        "rows": {
+          "train": 4178,
+          "validation": 895,
+          "test": 896
+        },
+        "threshold": 0.4136,
+        "seen": {
+          "recall": {
+            "rate": 0.977,
+            "low": 0.963,
+            "high": 0.988,
+            "n": 602
+          },
+          "false_positive_rate": {
+            "rate": 0.014,
+            "low": 0.003,
+            "high": 0.027,
+            "n": 294
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 37
+            },
+            "other": {
+              "rate": 0.969,
+              "low": 0.949,
+              "high": 0.986,
+              "n": 295
+            },
+            "override": {
+              "rate": 0.995,
+              "low": 0.984,
+              "high": 1.0,
+              "n": 190
+            },
+            "roleplay": {
+              "rate": 0.95,
+              "low": 0.887,
+              "high": 0.988,
+              "n": 80
+            }
+          },
+          "short_attacks": {
+            "rows": 130,
+            "recall": 0.969
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.274,
+            "low": 0.224,
+            "high": 0.327,
+            "n": 263
+          },
+          "false_positive_rate": {
+            "rate": 0.018,
+            "low": 0.005,
+            "high": 0.033,
+            "n": 399
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 5
+            },
+            "other": {
+              "rate": 0.183,
+              "low": 0.129,
+              "high": 0.238,
+              "n": 202
+            },
+            "override": {
+              "rate": 0.513,
+              "low": 0.359,
+              "high": 0.667,
+              "n": 39
+            },
+            "roleplay": {
+              "rate": 0.588,
+              "low": 0.353,
+              "high": 0.824,
+              "n": 17
+            }
+          }
+        }
+      },
+      "source:gandalf": {
+        "experiment": "source:gandalf",
+        "rows": {
+          "train": 3942,
+          "validation": 845,
+          "test": 845
+        },
+        "threshold": 0.4813,
+        "seen": {
+          "recall": {
+            "rate": 0.929,
+            "low": 0.904,
+            "high": 0.951,
+            "n": 491
+          },
+          "false_positive_rate": {
+            "rate": 0.014,
+            "low": 0.003,
+            "high": 0.025,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.97,
+              "low": 0.909,
+              "high": 1.0,
+              "n": 33
+            },
+            "other": {
+              "rate": 0.882,
+              "low": 0.842,
+              "high": 0.919,
+              "n": 272
+            },
+            "override": {
+              "rate": 0.991,
+              "low": 0.972,
+              "high": 1.0,
+              "n": 108
+            },
+            "roleplay": {
+              "rate": 0.987,
+              "low": 0.962,
+              "high": 1.0,
+              "n": 78
+            }
+          },
+          "short_attacks": {
+            "rows": 21,
+            "recall": 0.429
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.933,
+            "low": 0.917,
+            "high": 0.947,
+            "n": 999
+          },
+          "false_positive_rate": null,
+          "per_style": {
+            "extraction": {
+              "rate": 0.98,
+              "low": 0.949,
+              "high": 1.0,
+              "n": 98
+            },
+            "other": {
+              "rate": 0.803,
+              "low": 0.755,
+              "high": 0.848,
+              "n": 269
+            },
+            "override": {
+              "rate": 0.989,
+              "low": 0.979,
+              "high": 0.997,
+              "n": 619
+            },
+            "roleplay": {
+              "rate": 0.615,
+              "low": 0.308,
+              "high": 0.846,
+              "n": 13
+            }
+          }
+        }
+      },
+      "source:jackhhao": {
+        "experiment": "source:jackhhao",
+        "rows": {
+          "train": 3262,
+          "validation": 699,
+          "test": 700
+        },
+        "threshold": 0.6152,
+        "seen": {
+          "recall": {
+            "rate": 0.914,
+            "low": 0.888,
+            "high": 0.936,
+            "n": 544
+          },
+          "false_positive_rate": {
+            "rate": 0.0,
+            "low": 0.0,
+            "high": 0.0,
+            "n": 156
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.98,
+              "low": 0.939,
+              "high": 1.0,
+              "n": 49
+            },
+            "other": {
+              "rate": 0.872,
+              "low": 0.836,
+              "high": 0.908,
+              "n": 305
+            },
+            "override": {
+              "rate": 0.97,
+              "low": 0.94,
+              "high": 0.994,
+              "n": 166
+            },
+            "roleplay": {
+              "rate": 0.917,
+              "low": 0.792,
+              "high": 1.0,
+              "n": 24
+            }
+          },
+          "short_attacks": {
+            "rows": 98,
+            "recall": 0.918
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.977,
+            "low": 0.965,
+            "high": 0.988,
+            "n": 648
+          },
+          "false_positive_rate": {
+            "rate": 0.545,
+            "low": 0.519,
+            "high": 0.571,
+            "n": 1322
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 6
+            },
+            "other": {
+              "rate": 0.882,
+              "low": 0.818,
+              "high": 0.945,
+              "n": 110
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 119
+            },
+            "roleplay": {
+              "rate": 0.995,
+              "low": 0.988,
+              "high": 1.0,
+              "n": 413
+            }
+          }
+        }
+      },
+      "source:spml": {
+        "experiment": "source:spml",
+        "rows": {
+          "train": 2541,
+          "validation": 545,
+          "test": 545
+        },
+        "threshold": 0.3547,
+        "seen": {
+          "recall": {
+            "rate": 0.962,
+            "low": 0.941,
+            "high": 0.983,
+            "n": 287
+          },
+          "false_positive_rate": {
+            "rate": 0.027,
+            "low": 0.008,
+            "high": 0.047,
+            "n": 258
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 18
+            },
+            "other": {
+              "rate": 0.882,
+              "low": 0.812,
+              "high": 0.953,
+              "n": 85
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 119
+            },
+            "roleplay": {
+              "rate": 0.985,
+              "low": 0.954,
+              "high": 1.0,
+              "n": 65
+            }
+          },
+          "short_attacks": {
+            "rows": 178,
+            "recall": 0.949
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.768,
+            "low": 0.751,
+            "high": 0.785,
+            "n": 2364
+          },
+          "false_positive_rate": {
+            "rate": 0.046,
+            "low": 0.03,
+            "high": 0.063,
+            "n": 636
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.895,
+              "low": 0.845,
+              "high": 0.939,
+              "n": 181
+            },
+            "other": {
+              "rate": 0.672,
+              "low": 0.649,
+              "high": 0.694,
+              "n": 1514
+            },
+            "override": {
+              "rate": 0.99,
+              "low": 0.98,
+              "high": 0.998,
+              "n": 501
+            },
+            "roleplay": {
+              "rate": 0.833,
+              "low": 0.774,
+              "high": 0.887,
+              "n": 168
+            }
+          }
+        }
+      },
+      "style:extraction": {
+        "experiment": "style:extraction",
+        "rows": {
+          "train": 4438,
+          "validation": 951,
+          "test": 952
+        },
+        "threshold": 0.4299,
+        "seen": {
+          "recall": {
+            "rate": 0.953,
+            "low": 0.935,
+            "high": 0.97,
+            "n": 598
+          },
+          "false_positive_rate": {
+            "rate": 0.014,
+            "low": 0.003,
+            "high": 0.028,
+            "n": 354
+          },
+          "per_style": {
+            "other": {
+              "rate": 0.925,
+              "low": 0.892,
+              "high": 0.954,
+              "n": 305
+            },
+            "override": {
+              "rate": 0.995,
+              "low": 0.985,
+              "high": 1.0,
+              "n": 195
+            },
+            "roleplay": {
+              "rate": 0.959,
+              "low": 0.918,
+              "high": 0.99,
+              "n": 98
+            }
+          },
+          "short_attacks": {
+            "rows": 134,
+            "recall": 0.933
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.997,
+            "low": 0.99,
+            "high": 1.0,
+            "n": 290
+          },
+          "false_positive_rate": null,
+          "per_style": {
+            "extraction": {
+              "rate": 0.997,
+              "low": 0.99,
+              "high": 1.0,
+              "n": 290
+            }
+          }
+        }
+      },
+      "style:override": {
+        "experiment": "style:override",
+        "rows": {
+          "train": 3747,
+          "validation": 803,
+          "test": 803
+        },
+        "threshold": 0.6272,
+        "seen": {
+          "recall": {
+            "rate": 0.844,
+            "low": 0.811,
+            "high": 0.875,
+            "n": 449
+          },
+          "false_positive_rate": {
+            "rate": 0.0,
+            "low": 0.0,
+            "high": 0.0,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.971,
+              "low": 0.914,
+              "high": 1.0,
+              "n": 35
+            },
+            "other": {
+              "rate": 0.814,
+              "low": 0.771,
+              "high": 0.857,
+              "n": 328
+            },
+            "roleplay": {
+              "rate": 0.907,
+              "low": 0.849,
+              "high": 0.965,
+              "n": 86
+            }
+          },
+          "short_attacks": {
+            "rows": 77,
+            "recall": 0.662
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.978,
+            "low": 0.97,
+            "high": 0.985,
+            "n": 1278
+          },
+          "false_positive_rate": null,
+          "per_style": {
+            "override": {
+              "rate": 0.978,
+              "low": 0.97,
+              "high": 0.985,
+              "n": 1278
+            }
+          }
+        }
+      },
+      "style:roleplay": {
+        "experiment": "style:roleplay",
+        "rows": {
+          "train": 4214,
+          "validation": 903,
+          "test": 903
+        },
+        "threshold": 0.4445,
+        "seen": {
+          "recall": {
+            "rate": 0.947,
+            "low": 0.929,
+            "high": 0.965,
+            "n": 549
+          },
+          "false_positive_rate": {
+            "rate": 0.014,
+            "low": 0.003,
+            "high": 0.028,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.978,
+              "low": 0.933,
+              "high": 1.0,
+              "n": 45
+            },
+            "other": {
+              "rate": 0.915,
+              "low": 0.882,
+              "high": 0.944,
+              "n": 305
+            },
+            "override": {
+              "rate": 0.99,
+              "low": 0.975,
+              "high": 1.0,
+              "n": 199
+            }
+          },
+          "short_attacks": {
+            "rows": 151,
+            "recall": 0.927
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.926,
+            "low": 0.903,
+            "high": 0.946,
+            "n": 611
+          },
+          "false_positive_rate": null,
+          "per_style": {
+            "roleplay": {
+              "rate": 0.926,
+              "low": 0.903,
+              "high": 0.946,
+              "n": 611
+            }
+          }
+        }
+      }
+    },
+    "transformer": {
+      "random": {
+        "experiment": "random",
+        "rows": {
+          "train": 4641,
+          "validation": 995,
+          "test": 995
+        },
+        "threshold": 0.9284,
+        "seen": {
+          "recall": {
+            "rate": 0.98,
+            "low": 0.969,
+            "high": 0.991,
+            "n": 641
+          },
+          "false_positive_rate": {
+            "rate": 0.028,
+            "low": 0.011,
+            "high": 0.048,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.977,
+              "low": 0.932,
+              "high": 1.0,
+              "n": 44
+            },
+            "other": {
+              "rate": 0.967,
+              "low": 0.947,
+              "high": 0.983,
+              "n": 303
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 209
+            },
+            "roleplay": {
+              "rate": 0.976,
+              "low": 0.941,
+              "high": 1.0,
+              "n": 85
+            }
+          },
+          "short_attacks": {
+            "rows": 148,
+            "recall": 0.959
+          }
+        },
+        "unseen": null
+      },
+      "source:deepset": {
+        "experiment": "source:deepset",
+        "rows": {
+          "train": 4178,
+          "validation": 895,
+          "test": 896
+        },
+        "threshold": 0.9926,
+        "seen": {
+          "recall": {
+            "rate": 0.98,
+            "low": 0.968,
+            "high": 0.992,
+            "n": 602
+          },
+          "false_positive_rate": {
+            "rate": 0.007,
+            "low": 0.0,
+            "high": 0.017,
+            "n": 294
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 37
+            },
+            "other": {
+              "rate": 0.973,
+              "low": 0.953,
+              "high": 0.99,
+              "n": 295
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 190
+            },
+            "roleplay": {
+              "rate": 0.95,
+              "low": 0.9,
+              "high": 0.988,
+              "n": 80
+            }
+          },
+          "short_attacks": {
+            "rows": 130,
+            "recall": 0.969
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.418,
+            "low": 0.361,
+            "high": 0.479,
+            "n": 263
+          },
+          "false_positive_rate": {
+            "rate": 0.015,
+            "low": 0.005,
+            "high": 0.028,
+            "n": 399
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 5
+            },
+            "other": {
+              "rate": 0.342,
+              "low": 0.277,
+              "high": 0.411,
+              "n": 202
+            },
+            "override": {
+              "rate": 0.667,
+              "low": 0.513,
+              "high": 0.821,
+              "n": 39
+            },
+            "roleplay": {
+              "rate": 0.588,
+              "low": 0.353,
+              "high": 0.824,
+              "n": 17
+            }
+          }
+        }
+      },
+      "source:gandalf": {
+        "experiment": "source:gandalf",
+        "rows": {
+          "train": 3942,
+          "validation": 845,
+          "test": 845
+        },
+        "threshold": 0.8844,
+        "seen": {
+          "recall": {
+            "rate": 0.971,
+            "low": 0.955,
+            "high": 0.984,
+            "n": 491
+          },
+          "false_positive_rate": {
+            "rate": 0.017,
+            "low": 0.006,
+            "high": 0.031,
+            "n": 354
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 33
+            },
+            "other": {
+              "rate": 0.952,
+              "low": 0.926,
+              "high": 0.978,
+              "n": 272
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 108
+            },
+            "roleplay": {
+              "rate": 0.987,
+              "low": 0.962,
+              "high": 1.0,
+              "n": 78
+            }
+          },
+          "short_attacks": {
+            "rows": 21,
+            "recall": 0.667
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.948,
+            "low": 0.934,
+            "high": 0.961,
+            "n": 999
+          },
+          "false_positive_rate": null,
+          "per_style": {
+            "extraction": {
+              "rate": 0.99,
+              "low": 0.969,
+              "high": 1.0,
+              "n": 98
+            },
+            "other": {
+              "rate": 0.822,
+              "low": 0.777,
+              "high": 0.866,
+              "n": 269
+            },
+            "override": {
+              "rate": 0.998,
+              "low": 0.995,
+              "high": 1.0,
+              "n": 619
+            },
+            "roleplay": {
+              "rate": 0.846,
+              "low": 0.615,
+              "high": 1.0,
+              "n": 13
+            }
+          }
+        }
+      },
+      "source:jackhhao": {
+        "experiment": "source:jackhhao",
+        "rows": {
+          "train": 3262,
+          "validation": 699,
+          "test": 700
+        },
+        "threshold": 0.1413,
+        "seen": {
+          "recall": {
+            "rate": 0.994,
+            "low": 0.987,
+            "high": 1.0,
+            "n": 544
+          },
+          "false_positive_rate": {
+            "rate": 0.032,
+            "low": 0.006,
+            "high": 0.064,
+            "n": 156
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 49
+            },
+            "other": {
+              "rate": 0.99,
+              "low": 0.977,
+              "high": 1.0,
+              "n": 305
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 166
+            },
+            "roleplay": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 24
+            }
+          },
+          "short_attacks": {
+            "rows": 98,
+            "recall": 0.98
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.997,
+            "low": 0.992,
+            "high": 1.0,
+            "n": 648
+          },
+          "false_positive_rate": {
+            "rate": 0.983,
+            "low": 0.977,
+            "high": 0.99,
+            "n": 1322
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 6
+            },
+            "other": {
+              "rate": 0.982,
+              "low": 0.955,
+              "high": 1.0,
+              "n": 110
+            },
+            "override": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 119
+            },
+            "roleplay": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 413
+            }
+          }
+        }
+      },
+      "source:spml": {
+        "experiment": "source:spml",
+        "rows": {
+          "train": 2541,
+          "validation": 545,
+          "test": 545
+        },
+        "threshold": 0.9827,
+        "seen": {
+          "recall": {
+            "rate": 0.941,
+            "low": 0.913,
+            "high": 0.969,
+            "n": 287
+          },
+          "false_positive_rate": {
+            "rate": 0.008,
+            "low": 0.0,
+            "high": 0.019,
+            "n": 258
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 1.0,
+              "low": 1.0,
+              "high": 1.0,
+              "n": 18
+            },
+            "other": {
+              "rate": 0.835,
+              "low": 0.753,
+              "high": 0.918,
+              "n": 85
+            },
+            "override": {
+              "rate": 0.992,
+              "low": 0.975,
+              "high": 1.0,
+              "n": 119
+            },
+            "roleplay": {
+              "rate": 0.969,
+              "low": 0.923,
+              "high": 1.0,
+              "n": 65
+            }
+          },
+          "short_attacks": {
+            "rows": 178,
+            "recall": 0.927
+          }
+        },
+        "unseen": {
+          "recall": {
+            "rate": 0.635,
+            "low": 0.615,
+            "high": 0.654,
+            "n": 2364
+          },
+          "false_positive_rate": {
+            "rate": 0.0,
+            "low": 0.0,
+            "high": 0.0,
+            "n": 636
+          },
+          "per_style": {
+            "extraction": {
+              "rate": 0.812,
+              "low": 0.751,
+              "high": 0.867,
+              "n": 181
+            },
+            "other": {
+              "rate": 0.491,
+              "low": 0.466,
+              "high": 0.515,
+              "n": 1514
+            },
+            "override": {
+              "rate": 0.994,
+              "low": 0.986,
+              "high": 1.0,
+              "n": 501
+            },
+            "roleplay": {
+              "rate": 0.673,
+              "low": 0.601,
+              "high": 0.75,
+              "n": 168
+            }
+          }
+        }
+      }
+    }
+  }
+}

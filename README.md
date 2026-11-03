@@ -88,6 +88,23 @@ Where it's weak:
 
 Saved with a manifest that lists the SHA-256 of every file plus the threshold. Loading refuses a changed file, an extra file, any `.bin`/`.pt`/`.py` next to the weights, and an edited manifest when the deploy pins its hash. 34 tests, on a tiny model built in the test, so CI never downloads weights.
 
+**Held-out evaluation** ([evaluate.py](src/guard/evaluate.py)). A random split puts near-copies of every attack template on both sides, so it mostly measures memory. Here each experiment leaves out one whole source, or every attack of one style, from training and from the validation data that sets the threshold, then tests on exactly what was left out. SPML is capped at 3,000 rows for these runs (for both models, and for a random split rerun with the same cap) so it doesn't decide every result. Intervals are 95% bootstrap intervals.
+
+![Attacks caught and benign prompts flagged on sources and styles left out of training](reports/figures/heldout.png)
+
+| Left out | TF-IDF: attacks caught | TF-IDF: benign flagged | MiniLM: attacks caught | MiniLM: benign flagged |
+|---|---:|---:|---:|---:|
+| nothing (random split) | 95% | 1.1% | 98% | 2.8% (1.1 to 4.8) |
+| deepset | 27% | 1.8% | 42% | 1.5% |
+| gandalf (attacks only) | 93% | | 95% | |
+| jackhhao | 98% | **55%** | 100% | **98%** |
+| SPML | 77% | 4.6% | 64% | 0% |
+
+- **The false-alarm budget doesn't survive a new source.** Trained without jackhhao, TF-IDF flags 55% of jackhhao's benign prompts and MiniLM flags 98%. Without jackhhao, the benign training data is almost all short questions (99% under 221 characters), so "normal" means a question. Jackhhao's benign prompts are tasks: "Translate to Romanian...", "Write the next sentence...", character role-play. To a model that has only seen questions, an instruction looks like an attack. For TF-IDF it's mostly length (89% of long benign prompts flagged, 32% of short ones). MiniLM flags 97% even of the short ones.
+- **MiniLM's random-split lead doesn't carry over.** It catches more on new deepset and gandalf. It catches fewer on new SPML (64% against 77%, though with no false alarms), and its false alarms on new jackhhao are far worse. On the random split even its 1% budget came out at 2.8%: the threshold rests on about 350 validation benign prompts, so the 4th-highest one sets it.
+- **Holding out a style says little here.** Trained with no override attacks at all, TF-IDF still catches 98% of them. The styles are regex labels, and the remaining attacks share their words. The source split is the honest test, so the slow model was only run on that.
+- **What this means for the guard:** the 1% false-alarm figure from Days 3 and 4 holds only for traffic that looks like the training data. An app whose users write instructions (summarise this, translate that) will see far more false alarms. It needs benign prompts from its own users before the threshold can be trusted.
+
 **Guard API** ([api.py](src/guard/api.py), [client.py](src/guard/client.py)). `POST /v1/check` with `{"text": "..."}` and an `X-API-Key` header returns `allow`, `review` or `block` with coarse reasons:
 
 ```json
@@ -119,7 +136,7 @@ make serve
 - [x] Collect and merge public datasets, dedupe, look at attack styles
 - [x] Baseline: TF-IDF + logistic regression
 - [x] Fine-tune a small transformer
-- [ ] Evaluate on held-out attack styles; error analysis
+- [x] Evaluate on held-out sources and attack styles; error analysis
 - [x] Guard API (FastAPI)
 - [ ] Next.js playground
 - [ ] Red-team test suite and latency benchmark
