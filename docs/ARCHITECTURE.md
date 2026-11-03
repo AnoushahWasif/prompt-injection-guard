@@ -37,7 +37,7 @@ This is the most important section, because a guard that looks like a fix is dan
 | Evaluation | `src/guard/evaluate.py` | Leave-one-source-out and leave-one-style-out experiments with bootstrap intervals; error analysis (Day 5) |
 | Guard API | `src/guard/api.py`, `src/guard/client.py` | FastAPI `POST /v1/check` returning allow / review / block, and a client that blocks when the guard can't answer (Day 6) |
 | Playground | `web/` | Next.js page: type a prompt, see the score and why (Day 7) |
-| Red-team suite | `tests/redteam/` | Known bypasses as pytest cases, plus a latency benchmark (Day 8) |
+| Red-team suite | `src/guard/redteam.py`, `tests/redteam/`, `src/guard/bench.py` | 30 hand-written attacks and look-alikes as tests against the real model, run in CI; latency by prompt length (Day 8) |
 
 ## Data flow
 
@@ -98,6 +98,9 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 22 | Held-out evaluation leaves out a whole source, or every attack of one style, from training and threshold setting (Day 5) | The threshold is part of the model. Setting it with the held-out data in validation would hide exactly the failure this tests for: a false-alarm rate that doesn't transfer |
 | 23 | SPML is capped at 3,000 rows in held-out experiments, for both models and for a matching random split (Day 5) | At 81% of the data it would decide every result. The matching random split keeps the comparison like for like |
 | 24 | Rates are reported with 95% bootstrap intervals (Day 5) | A 1% budget on ~350 validation prompts is set by 3 or 4 of them; a single number would hide that |
+| 25 | Red-team prompts are tests, never training data; known misses are strict expected failures (Day 8) | Training on the test would make it pass without the model getting better. A strict xfail fails when a miss starts passing, so the list of known misses can't go stale |
+| 26 | The normaliser joins spaced-out letters and adds readable base64 as text (Day 8) | Same rule as decision 3: show the model what the LLM would read. ROT13 and reversed text are not undone, because guessing at every decoding would add text to normal prompts |
+| 27 | A CI job rebuilds the model from the pinned data and runs the red-team suite (Day 8) | The model isn't committed, so without this the suite would only run on one laptop. Pinned revisions and hashes make the rebuilt model the same one |
 
 ## Threat model of the guard itself (STRIDE)
 
