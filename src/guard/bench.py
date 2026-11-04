@@ -69,8 +69,8 @@ if __name__ == "__main__":
 
     from guard.api import Settings, create_app, load_guard
 
-    model_dir = Path("models/baseline")
-    sha = json.loads((model_dir / "model.json").read_text())["sha256"]
+    model_dir = Path("models/portable")
+    sha = hashlib.sha256((model_dir / "manifest.json").read_bytes()).hexdigest()
     key = "benchmark-key"
     settings = Settings(
         model_dir=model_dir,

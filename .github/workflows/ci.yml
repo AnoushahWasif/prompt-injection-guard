@@ -30,6 +30,7 @@ jobs:
       - run: uv sync --frozen
       - run: uv run python -m guard.data
       - run: uv run python -m guard.baseline
+      - run: uv run python -m guard.portable
       - run: uv run pytest tests/redteam -rx
         env:
           GUARD_REDTEAM_REQUIRED: "1"
