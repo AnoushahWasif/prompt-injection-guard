@@ -61,7 +61,7 @@ flowchart LR
 - **API** (`POST /v1/check`). Returns allow, review or block with coarse reasons, never the score, which would help an attacker tune against it.
   - API keys are stored only as hashes and compared in constant time.
   - Rate limit per key, size caps, at most 4 prompts scored at once, and a 2-second limit.
-  - The model loads only if its hash matches the one pinned in config, and it's unpickled from the bytes that were hashed.
+  - The model is stored without a pickle (JSON vocabularies and safetensors weights), and loads only if its manifest's hash matches the one pinned in config. Nothing is ever unpickled.
   - Prompt text is never logged.
 - **Client.** Anything but a clear answer counts as "block": a timeout, an error, an unknown decision. An app can fail open, but has to say so.
 
@@ -88,7 +88,7 @@ The full record is in [docs/RESULTS.md](docs/RESULTS.md).
 
 ```bash
 uv sync
-make data baseline      # downloads 4 pinned datasets (30 MB), checks hashes, trains (~1 min)
+make data baseline      # downloads 4 pinned datasets (30 MB), checks hashes, trains (~1 min), exports models/portable
 make test redteam bench
 cp .env.example .env    # set GUARD_MODEL_SHA256 and GUARD_API_KEY_SHA256
 make serve              # http://127.0.0.1:8000, behind a TLS proxy in real use
@@ -97,7 +97,7 @@ make serve              # http://127.0.0.1:8000, behind a TLS proxy in real use
 ```bash
 curl -s http://127.0.0.1:8000/v1/check -H "X-API-Key: $KEY" \
   -H "content-type: application/json" -d '{"text": "Ignore all previous instructions"}'
-# {"decision":"block","reasons":["looks_like_injection"],"request_id":"...","model":"84156b3ac826"}
+# {"decision":"block","reasons":["looks_like_injection"],"request_id":"...","model":"<first 12 of your manifest hash>"}
 ```
 
 ## Project structure
@@ -109,11 +109,12 @@ src/guard/
   baseline.py        TF-IDF + logistic regression, length-only comparison, thresholds
   finetune.py        MiniLM fine-tuning, windowed scoring, hashed manifest (not served)
   evaluate.py        held-out sources and styles, bootstrap intervals
-  model_store.py     save and hash-checked load
+  model_store.py     save and hash-checked load of the training pickle
+  portable.py        the same model as JSON + safetensors; the only format the API loads
   api.py, client.py  the service and a fail-closed client
   redteam.py         hand-written attacks and look-alikes
   bench.py           latency by prompt length
-tests/               229 tests, 31 of them in tests/redteam against the real model
+tests/               245 tests, 31 of them in tests/redteam against the real model
 docs/                ARCHITECTURE.md (decisions, STRIDE, OWASP LLM Top 10), RESULTS.md
 MODEL_CARD.md
 ```

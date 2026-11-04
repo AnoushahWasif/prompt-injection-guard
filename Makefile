@@ -19,6 +19,7 @@ data:
 
 baseline:
 	uv run python -m guard.baseline
+	uv run python -m guard.portable
 
 finetune:
 	uv run python -m guard.finetune

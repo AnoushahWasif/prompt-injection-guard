@@ -32,7 +32,7 @@ A small, fast classifier that scores how likely a prompt is to be a prompt injec
 | 0.233 to 0.461 | review | about 5% of benign prompts score above 0.233 |
 | below 0.233 | allow | |
 
-- **Files:** `model.joblib` (a pickle) and `model.json`, the manifest with its SHA-256, thresholds and data hash. Load it only through `guard.model_store.load_model` with the hash pinned in your own config, which checks the hash before unpickling. Unpickling a file you haven't checked runs whatever code is in it.
+- **Files:** no pickle. `vocab_words.json` and `vocab_chars.json` (term to column), `weights.safetensors` (IDF weights and logistic-regression coefficients), `config.json` (vectoriser settings and thresholds), and `manifest.json`, which lists each file's SHA-256. `guard.portable.load(folder, pinned_hash)` checks the manifest against a hash you pin in your own config, checks each file against the manifest, and rebuilds the scikit-learn objects. The rebuilt model scores the same as the trained one: the export checks this to within 1e-12 on 500 real prompts before it writes anything. Total size about 6 MB.
 - **Author:** Anoushah Wasif. **License:** MIT.
 
 ## Intended use

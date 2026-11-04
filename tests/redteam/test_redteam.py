@@ -1,11 +1,11 @@
 """The red-team cases against the real model. Known misses are strict xfails: they show what
 gets through today, and they fail loudly the day one starts passing, so the list stays true.
 
-Needs models/baseline (`make data baseline`). Skipped without it, except in CI, where
+Needs models/portable (`make data baseline`). Skipped without it, except in CI, where
 GUARD_REDTEAM_REQUIRED=1 makes a missing model a failure.
 """
 
-import json
+import hashlib
 import os
 from pathlib import Path
 
@@ -14,17 +14,17 @@ import pytest
 from guard.api import Settings, load_guard
 from guard.redteam import CASES
 
-MODEL = Path("models/baseline")
+MODEL = Path("models/portable")
 
 
 @pytest.fixture(scope="module")
 def guard():
-    manifest = MODEL / "model.json"
+    manifest = MODEL / "manifest.json"
     if not manifest.is_file():
         if os.environ.get("GUARD_REDTEAM_REQUIRED") == "1":
-            pytest.fail("models/baseline is missing; run `make data baseline`")
-        pytest.skip("models/baseline not built")
-    sha = json.loads(manifest.read_text())["sha256"]
+            pytest.fail("models/portable is missing; run `make data baseline`")
+        pytest.skip("models/portable not built")
+    sha = hashlib.sha256(manifest.read_bytes()).hexdigest()
     return load_guard(
         Settings(model_dir=MODEL, model_sha256=sha, api_key_sha256=frozenset({"0" * 64}))
     )

@@ -9,7 +9,8 @@ What it protects against (ARCHITECTURE.md, STRIDE table):
   once, and a time limit. When the guard can't answer it says so with a 503, and the client
   blocks (decision 6). A slow prompt keeps its scoring slot until it really finishes, so
   timed-out work can't pile up behind the cap.
-- Tampering with the model: it is loaded only if its hash matches the one pinned in config.
+- Tampering with the model: it is loaded only if its manifest's hash matches the one pinned
+  in config, and only from the portable format, so nothing is ever unpickled.
 """
 
 import asyncio
@@ -62,7 +63,7 @@ class Settings:
     def from_env(cls, env=os.environ) -> "Settings":
         try:
             return cls(
-                model_dir=Path(env.get("GUARD_MODEL_DIR", "models/baseline")),
+                model_dir=Path(env.get("GUARD_MODEL_DIR", "models/portable")),
                 model_sha256=env["GUARD_MODEL_SHA256"].strip().lower(),
                 api_key_sha256=frozenset(
                     h.strip().lower() for h in env["GUARD_API_KEY_SHA256"].split(",") if h.strip()
@@ -117,15 +118,15 @@ class Guard:
 
 
 def load_guard(settings: Settings) -> Guard:
-    from guard.model_store import load_model
+    """Only the portable format (guard.portable): serving never unpickles anything."""
+    from guard.portable import load
 
-    loaded = load_model(settings.model_dir, settings.model_sha256)
-    review = float(loaded.manifest.get("review_threshold", loaded.threshold))
+    loaded = load(settings.model_dir, settings.model_sha256)
     model = loaded.model
     return Guard(
         score=lambda text: float(model.predict_proba([text])[0, 1]),
         block_at=loaded.threshold,
-        review_at=review,
+        review_at=loaded.review,
         version=settings.model_sha256[:12],
     )
 

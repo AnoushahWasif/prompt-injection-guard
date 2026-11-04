@@ -101,6 +101,7 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | 25 | Red-team prompts are tests, never training data; known misses are strict expected failures (Day 8) | Training on the test would make it pass without the model getting better. A strict xfail fails when a miss starts passing, so the list of known misses can't go stale |
 | 26 | The normaliser joins spaced-out letters and adds readable base64 as text (Day 8) | Same rule as decision 3: show the model what the LLM would read. ROT13 and reversed text are not undone, because guessing at every decoding would add text to normal prompts |
 | 27 | A CI job rebuilds the model from the pinned data and runs the red-team suite (Day 8) | The model isn't committed, so without this the suite would only run on one laptop. Pinned revisions and hashes make the rebuilt model the same one |
+| 28 | The served and published model is JSON vocabularies plus safetensors weights, with a hashed manifest; the API loads nothing else (Day 9) | A pickle runs code when loaded, so it can't be shared on a model hub or trusted from a download. The export refuses to write unless the rebuilt model scores the same as the trained one |
 
 ## Threat model of the guard itself (STRIDE)
 
@@ -109,7 +110,7 @@ Each file is pinned to a commit and a SHA-256. `xTRam1/safe-guard-prompt-injecti
 | **Spoofing** | Something other than the app calls the guard to probe it for free | API key per calling app, checked in constant time; rate limit per key |
 | **Tampering** | Evasion: the text is crafted to score low (hidden characters, lookalikes, encodings, typos) | Normaliser before scoring; held-out style evaluation; red-team suite that grows with every bypass found |
 | **Tampering** | Poisoned training data (mislabelled attacks in a public dataset) | Pinned revisions, recorded sources, dedupe, and a look at disagreements between datasets on Day 2 (OWASP LLM04) |
-| **Tampering** | A swapped model file | SHA-256 check before loading |
+| **Tampering** | A swapped model file | Manifest hash pinned in config, each file checked against it, and no pickle: the served format is data only (decision 28) |
 | **Repudiation** | An app claims the guard allowed something it blocked | Each decision logged with request id, score and model version, but not the prompt text (see next row) |
 | **Information disclosure** | Prompts contain personal or secret data and end up in guard logs | Prompt text is never logged; only length, score, decision and which signals fired |
 | **Information disclosure** | Scores leak how close an attack is to passing, so attackers can tune against it | `/check` returns the decision and coarse reasons to the app; the exact score only goes to logs or a debug mode that is off in production |
